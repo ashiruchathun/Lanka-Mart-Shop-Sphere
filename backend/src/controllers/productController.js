@@ -451,9 +451,71 @@ async function updateProduct(req, res) {
     }
   }
 }
+async function deleteProduct(req, res) {
+  const productId = Number(req.params.id);
+
+  if (!Number.isInteger(productId) || productId <= 0) {
+    return res.status(400).json({
+      success: false,
+      message: "A valid product ID is required",
+    });
+  }
+
+  try {
+    const [products] = await db.query(
+      `
+        SELECT product_id, product_name, is_active
+        FROM products
+        WHERE product_id = ?
+      `,
+      [productId]
+    );
+
+    if (products.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    if (products[0].is_active === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "Product is already inactive",
+      });
+    }
+
+    await db.query(
+      `
+        UPDATE products
+        SET is_active = FALSE
+        WHERE product_id = ?
+      `,
+      [productId]
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Product deactivated successfully",
+      data: {
+        product_id: productId,
+        product_name: products[0].product_name,
+        is_active: 0,
+      },
+    });
+  } catch (error) {
+    console.error("Delete product error:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to deactivate the product",
+    });
+  }
+}
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
+  deleteProduct,
 };
