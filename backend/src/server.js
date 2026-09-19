@@ -3,22 +3,25 @@ const cors = require("cors");
 require("dotenv").config();
 
 const db = require("./config/db");
-const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const productRoutes = require("./routes/productRoutes");
+const catalogRoutes = require("./routes/catalogRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
 
 app.use(express.json());
 
-app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/admin/products", productRoutes);
+app.use("/api/products", catalogRoutes);
 
 app.get("/", (req, res) => {
   res.json({

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const BACKEND_URL = "http://localhost:5000";
 
@@ -71,17 +72,24 @@ export default function CategoriesPage() {
       {!loading && !error && categories.length > 0 && (
         <div className="product-grid">
           {categories.map((category) => (
-            <article className="product-card" key={category.category_id}>
-              <div className="product-image" style={{ minHeight: '150px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span className="category-symbol" style={{ fontSize: '4rem', opacity: 1, position: 'static' }}>
-                  {categoryIcons[category.category_name] || "📦"}
-                </span>
-              </div>
-              <div className="product-information">
-                <h3>{category.category_name}</h3>
-                <p className="product-description">{category.description}</p>
-              </div>
-            </article>
+            <Link 
+              to={`/?category=${encodeURIComponent(category.category_name)}`}
+              className="product-card" 
+              key={category.category_id}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
+              <article>
+                <div className="product-image" style={{ minHeight: '150px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span className="category-symbol" style={{ fontSize: '4rem', opacity: 1, position: 'static' }}>
+                    {categoryIcons[category.category_name] || "📦"}
+                  </span>
+                </div>
+                <div className="product-information">
+                  <h3>{category.category_name}</h3>
+                  <p className="product-description">{category.description}</p>
+                </div>
+              </article>
+            </Link>
           ))}
         </div>
       )}

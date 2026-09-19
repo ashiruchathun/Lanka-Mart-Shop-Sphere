@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getProducts } from "../services/productService";
 
 const BACKEND_URL = "http://localhost:5000";
@@ -21,10 +22,22 @@ function formatPrice(price) {
 }
 
 export default function CataloguePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedStock, setSelectedStock] = useState("All");
+  
+  const selectedCategory = searchParams.get("category") || "All";
+  
+  const handleCategoryChange = (event) => {
+    const value = event.target.value;
+    if (value === "All") {
+      searchParams.delete("category");
+    } else {
+      searchParams.set("category", value);
+    }
+    setSearchParams(searchParams);
+  };
   const [sortOption, setSortOption] = useState("newest");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -238,7 +251,7 @@ export default function CataloguePage() {
 
           <select
             value={selectedCategory}
-            onChange={(event) => setSelectedCategory(event.target.value)}
+            onChange={handleCategoryChange}
             aria-label="Filter products by category"
           >
             {categories.map((category) => (
