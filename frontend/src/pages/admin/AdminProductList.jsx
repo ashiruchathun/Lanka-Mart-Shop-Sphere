@@ -12,8 +12,7 @@ export default function AdminProductList() {
   const fetchProducts = async () => {
     try {
       const data = await getProducts();
-      // Handle the case where the API returns { success: true, data: [...] } instead of directly [...]
-      setProducts(data.data || data);
+      setProducts(data);
     } catch (error) {
       console.error('Failed to fetch products', error);
     }
@@ -42,44 +41,58 @@ export default function AdminProductList() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Manage Products</h2>
-        <Link to="/admin/products/new" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-          Add New Product
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 bg-white rounded-xl shadow-lg mt-10 border border-gray-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900">Product Catalogue</h2>
+          <p className="text-gray-500 mt-1">Manage your store's inventory and product listings.</p>
+        </div>
+        <Link to="/admin/products/new" className="px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition-all shadow-sm">
+          + Add New Product
         </Link>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="min-w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-100 border-b border-gray-200 text-gray-700">
-              <th className="p-3 font-semibold">SKU</th>
-              <th className="p-3 font-semibold">Name</th>
-              <th className="p-3 font-semibold">Category</th>
-              <th className="p-3 font-semibold">Price</th>
-              <th className="p-3 font-semibold text-center">Status</th>
-              <th className="p-3 font-semibold text-right">Actions</th>
+            <tr className="bg-gray-50 border-b border-gray-200 text-gray-700">
+              <th className="p-4 font-semibold text-sm uppercase tracking-wider">SKU</th>
+              <th className="p-4 font-semibold text-sm uppercase tracking-wider">Name</th>
+              <th className="p-4 font-semibold text-sm uppercase tracking-wider">Category</th>
+              <th className="p-4 font-semibold text-sm uppercase tracking-wider">Price</th>
+              <th className="p-4 font-semibold text-sm uppercase tracking-wider text-center">Status</th>
+              <th className="p-4 font-semibold text-sm uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.map(prod => (
-              <tr key={prod.product_id} className="border-b border-gray-100 hover:bg-gray-50 text-gray-800">
-                <td className="p-3 font-mono text-sm text-gray-500">{prod.sku}</td>
-                <td className="p-3 font-medium">{prod.product_name}</td>
-                <td className="p-3">{prod.category_name}</td>
-                <td className="p-3">LKR {parseFloat(prod.price).toLocaleString()}</td>
-                <td className="p-3 text-center">
-                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${prod.is_active === 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {prod.is_active === 1 ? 'active' : 'inactive'}
+              <tr key={prod.product_id} className="border-b border-gray-100 hover:bg-green-50 transition-colors text-gray-800">
+                <td className="p-4 font-mono text-sm text-gray-500 whitespace-nowrap">{prod.sku}</td>
+                <td className="p-4 font-semibold text-gray-900">{prod.product_name}</td>
+                <td className="p-4">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    {prod.category_name}
                   </span>
                 </td>
-                <td className="p-3 text-right">
-                  <Link to={`/admin/products/${prod.product_id}/edit`} className="text-blue-600 hover:text-blue-800 mr-3 font-medium">Edit</Link>
+                <td className="p-4 font-medium text-gray-700 whitespace-nowrap">LKR {parseFloat(prod.price).toLocaleString()}</td>
+                <td className="p-4 text-center">
+                  <span className={`inline-flex items-center px-3 py-1 text-xs font-bold rounded-full ${prod.is_active === 1 ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-gray-100 text-gray-600 border border-gray-200'}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${prod.is_active === 1 ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                    {prod.is_active === 1 ? 'Active' : 'Inactive'}
+                  </span>
+                </td>
+                <td className="p-4 text-right whitespace-nowrap">
+                  <Link to={`/admin/products/${prod.product_id}/edit`} className="inline-flex items-center justify-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mr-2 transition-colors">
+                    Edit
+                  </Link>
                   {prod.is_active === 1 ? (
-                    <button onClick={() => handleDeactivate(prod.product_id)} className="text-orange-600 hover:text-orange-800 font-medium">Deactivate</button>
+                    <button onClick={() => handleDeactivate(prod.product_id)} className="inline-flex items-center justify-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                      Deactivate
+                    </button>
                   ) : (
-                    <button onClick={() => handleActivate(prod.product_id)} className="text-green-600 hover:text-green-800 font-medium">Activate</button>
+                    <button onClick={() => handleActivate(prod.product_id)} className="inline-flex items-center justify-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                      Activate
+                    </button>
                   )}
                 </td>
               </tr>

@@ -3,7 +3,7 @@ const db = require("../config/db");
 async function getAllCategories(req, res) {
   try {
     const [categories] = await db.query(`
-      SELECT category_id, category_name, description
+      SELECT *
       FROM categories
       ORDER BY category_name ASC
     `);
