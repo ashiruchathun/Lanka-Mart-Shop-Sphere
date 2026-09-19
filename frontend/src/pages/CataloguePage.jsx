@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getProducts } from "../services/productService";
 
@@ -41,6 +41,14 @@ export default function CataloguePage() {
   const [sortOption, setSortOption] = useState("newest");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const productDialog = useRef(null);
+
+  useEffect(() => {
+    if (selectedProduct && productDialog.current && !productDialog.current.open) {
+      productDialog.current.showModal();
+    }
+  }, [selectedProduct]);
 
   async function loadProducts() {
     try {
@@ -147,7 +155,7 @@ export default function CataloguePage() {
 
   function clearFilters() {
     setSearchTerm("");
-    setSelectedCategory("All");
+    setSearchParams({});
     setSelectedStock("All");
     setSortOption("newest");
   }
@@ -242,6 +250,7 @@ export default function CataloguePage() {
             <span>⌕</span>
 
             <input
+              aria-label="Search products"
               type="search"
               placeholder="Search products, categories or SKU..."
               value={searchTerm}
@@ -328,7 +337,7 @@ export default function CataloguePage() {
 
                   {product.image_url && (
                     <img
-                      src={`${BACKEND_URL}${product.image_url}`}
+                      src={/^https?:\/\//i.test(product.image_url) ? product.image_url : `${BACKEND_URL}${product.image_url}`}
                       alt={product.product_name}
                       onError={(event) => {
                         event.currentTarget.style.display = "none";
@@ -366,10 +375,11 @@ export default function CataloguePage() {
                     <button
                       type="button"
                       disabled={product.stock_status === "Out of Stock"}
+                      onClick={() => setSelectedProduct(product)}
                     >
                       {product.stock_status === "Out of Stock"
                         ? "Unavailable"
-                        : "View product"}
+                        : "View details"}
                     </button>
                   </div>
                 </div>
@@ -378,6 +388,16 @@ export default function CataloguePage() {
           </div>
         )}
       </section>
+      {selectedProduct && (
+        <dialog ref={productDialog} className="product-dialog" onClose={() => setSelectedProduct(null)} aria-labelledby="product-dialog-title">
+          <div className="product-dialog-header"><span className="eyebrow">Product details</span><button type="button" onClick={() => productDialog.current?.close()} aria-label="Close product details">×</button></div>
+          <h2 id="product-dialog-title">{selectedProduct.product_name}</h2>
+          <p className="product-category">{selectedProduct.category_name}</p>
+          <p>{selectedProduct.description || 'No description available.'}</p>
+          <div className="product-dialog-meta"><span>SKU: {selectedProduct.sku}</span><span>{selectedProduct.stock_status} · {selectedProduct.quantity_in_stock} available</span></div>
+          <strong className="product-dialog-price">{formatPrice(selectedProduct.price)}</strong>
+        </dialog>
+      )}
     </>
   );
 }

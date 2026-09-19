@@ -1,16 +1,25 @@
-# React + Vite
+# ShopSphere frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The customer catalogue, category browser, inventory view and product/category admin screens are built with React, Vite and Tailwind CSS 4. Tailwind is bundled into the app using the Vite plugin. Custom page styles live in `src/App.css`; shared defaults and Tailwind's import are in `src/index.css`.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This frontend expects the existing ShopSphere backend at `http://localhost:5000`. Start the backend and MySQL as usual. In a separate terminal, from this `frontend` folder:
 
-## React Compiler
+```powershell
+npm ci
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Open `http://localhost:5173`. If you already have an older Vite process open, restart it after installing the new dependencies.
 
-## Expanding the Oxlint configuration
+## Check changes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```powershell
+npm run lint
+npm run build
+```
+
+Pages: `/` (products), `/categories`, `/inventory`, `/admin` (product management), `/admin/products/new`, `/admin/products/:id/edit`, `/admin/categories`. The category cards link back to the product catalogue with a selected category. Public product cards open a details dialog. Admin changes still use the existing backend API.
+
+The delivered ZIP contains source and the npm lockfile. `node_modules`, `dist`, local environment settings and backend files are excluded. Copy the `frontend` folder over your existing project's `frontend` folder after making a backup of any additional local changes. Do not replace the backend.

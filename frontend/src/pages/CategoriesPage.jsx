@@ -74,13 +74,12 @@ export default function CategoriesPage() {
           {categories.map((category) => (
             <Link 
               to={`/?category=${encodeURIComponent(category.category_name)}`}
-              className="product-card" 
+              className="product-card collection-card" 
               key={category.category_id}
-              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
             >
               <article>
-                <div className="product-image" style={{ minHeight: '150px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span className="category-symbol" style={{ fontSize: '4rem', opacity: 1, position: 'static' }}>
+                <div className="product-image">
+                  <span className="category-symbol">
                     {categoryIcons[category.category_name] || "📦"}
                   </span>
                 </div>
@@ -92,6 +91,9 @@ export default function CategoriesPage() {
             </Link>
           ))}
         </div>
+      )}
+      {!loading && !error && categories.length === 0 && (
+        <div className="status-message"><h3>No categories yet</h3><p>Collections will appear here as they are added.</p></div>
       )}
     </section>
   );

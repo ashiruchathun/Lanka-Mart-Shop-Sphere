@@ -20,9 +20,10 @@ function AppLayout() {
   }
 
   return (
-    <div className="app">
+    <div className="app public-app">
       <header className="site-header">
-        <Link className="brand" to="/">
+        <div className="header-inner">
+        <Link className="brand" to="/" aria-label="ShopSphere home">
           <span className="brand-icon">S</span>
 
           <span>
@@ -46,6 +47,7 @@ function AppLayout() {
         <Link className="admin-button" to="/admin">
           Admin Portal
         </Link>
+        </div>
       </header>
 
       <main>
